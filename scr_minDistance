@@ -1,0 +1,75 @@
+// Script assets have changed for v2.3.0 see
+// https://help.yoyogames.com/hc/en-us/articles/360005277377 for more information
+function scr_minDistance(maze){
+	mouse = instance_create_depth(0,0,0, obj_position);
+	mouse.distance = 0;
+	
+	var i;
+	var j;
+	for (i = 0; i < 32; i++){
+		for (j = 0; j < 32; j++){
+			if (maze[i,j] == "0"){ //0 represents wall
+				visited[i,j] = true;
+			}
+			else{
+				visited[i,j] = false;
+			}
+			if (maze[i,j] == "s"){ //s represents mouse
+				mouse.y = i;
+				mouse.x = j;
+			}
+		}
+	}
+	//applying FS on matrix cells starting from source
+	q = ds_queue_create();
+	ds_queue_enqueue(q, mouse);
+	visited[mouse.y, mouse.x] = true;
+	while (!ds_queue_empty(q)){
+		temp_p = ds_queue_head(q);
+		p = instance_create_depth(temp_p.x, temp_p.y, 0, obj_position);
+		//with (p){
+			p.distance = temp_p.distance;
+		//}
+		ds_queue_dequeue(q);
+		
+		if (maze[p.x,p.y] == "d"){ //destination found
+			return p.distance;
+		}
+		//moving up
+		if (p.y - 1 >= 0 && visited[p.y - 1, p.x] == false) {
+			tempPosition = instance_create_depth(p.y-1, p.x, 0, obj_position);
+			//with (tempPosition){
+				tempPosition.distance = p.distance+1;
+			//}
+            ds_queue_enqueue(q,tempPosition);//q.push(Position(p.row - 1, p.col, p.distance + 1));
+            visited[p.y - 1, p.x] = true;
+        }
+		//moving down
+		if (p.y + 1 < 32 && visited[p.y + 1, p.x] == false) {
+			tempPosition = instance_create_depth(p.y+1, p.x, 0, obj_position);
+			//with (tempPosition){
+				 tempPosition.distance = p.distance+1;
+			//}
+            ds_queue_enqueue(q,tempPosition);
+            visited[p.y + 1, p.x] = true;
+        }
+		//moving left
+		if (p.x - 1 >= 0 && visited[p.y, p.x - 1] == false) {
+			tempPosition = instance_create_depth(p.y, p.x-1, 0, obj_position);
+			//with (tempPosition){
+				tempPosition.distance = p.distance+1;
+			//}
+            ds_queue_enqueue(q,tempPosition);
+            visited[p.y, p.x - 1] = true;
+		}
+		//moving right
+		if (p.x + 1 < 32 && visited[p.y, p.x + 1] == false) {
+			tempPosition = instance_create_depth(p.y, p.x+1, 0, obj_position);
+			//with (tempPosition){
+				tempPosition.distance = p.distance+1;
+			//}
+			ds_queue_enqueue(q,tempPosition);
+            visited[p.y, p.x + 1] = true;
+        }
+	}
+}
