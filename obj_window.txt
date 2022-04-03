@@ -1,0 +1,7 @@
+///@description Modified the window size to fit the player's screen. I did not worry about GUI since beforehand we agreed that it would be too much work
+
+||| C R E A T E |||
+
+var window_width = display_get_width();
+var window_height = display_get_height();
+window_set_size(window_width, window_height);
